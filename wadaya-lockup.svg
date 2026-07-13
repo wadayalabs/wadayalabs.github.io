@@ -1,0 +1,33 @@
+<svg width="280" height="64" viewBox="0 0 280 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Wadaya Labs">
+  <defs>
+    <linearGradient id="lk-base" x1="4" y1="52" x2="52" y2="8" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f5e54"/>
+      <stop offset="0.3" stop-color="#0d9488"/>
+      <stop offset="0.58" stop-color="#10b981"/>
+      <stop offset="0.8" stop-color="#f59e0b"/>
+      <stop offset="1" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="lk-arrow" x1="33" y1="14" x2="45" y2="2" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset="1" stop-color="#fef9c3"/>
+    </linearGradient>
+    <linearGradient id="lk-shine" x1="6" y1="48" x2="46" y2="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Mark (48x48 at x=8, y=8) -->
+  <g transform="translate(8 8)">
+    <path d="M6 21 L13 34 L21 16 L29 31 L37 8" stroke="url(#lk-base)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M6 21 L13 34 L21 16 L29 31 L37 8" stroke="url(#lk-shine)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none" transform="translate(-0.5 -1.1)"/>
+    <path d="M32.8 6.5 L41.2 9.5 L39 2.3 Z" fill="url(#lk-arrow)"/>
+    <circle cx="43" cy="3" r="1.8" fill="#fef9c3"/>
+  </g>
+
+  <!-- Wordmark: "Wadaya" + "Labs" -->
+  <!-- "Wadaya" at 23px bold serif ≈ 78px wide, ends ~x=150. Normal inter-word gap ~7px. "Labs" starts at x=157 -->
+  <text x="72" y="40" font-family="Fraunces, Georgia, 'Times New Roman', serif" font-size="23" font-weight="700" letter-spacing="-0.4" fill="#0f172a">Wadaya</text>
+  <text x="157" y="40" font-family="Fraunces, Georgia, 'Times New Roman', serif" font-size="23" font-weight="700" letter-spacing="-0.4" fill="#94a3b8">Labs</text>
+</svg>

@@ -1,0 +1,44 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Wadaya Labs">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#042f2a"/>
+      <stop offset="0.55" stop-color="#0a3a34"/>
+      <stop offset="1" stop-color="#134e4a"/>
+    </linearGradient>
+    <radialGradient id="bg-glow" cx="0.72" cy="0.28" r="0.6" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f59e0b" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ic-base" x1="96" y1="416" x2="416" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f5e54"/>
+      <stop offset="0.3" stop-color="#0d9488"/>
+      <stop offset="0.58" stop-color="#10b981"/>
+      <stop offset="0.8" stop-color="#f59e0b"/>
+      <stop offset="1" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="ic-arrow" x1="330" y1="116" x2="430" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset="1" stop-color="#fef9c3"/>
+    </linearGradient>
+    <linearGradient id="ic-shine" x1="120" y1="380" x2="400" y2="90" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="rounded">
+      <rect x="0" y="0" width="512" height="512" rx="112" ry="112"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#rounded)">
+    <rect x="0" y="0" width="512" height="512" fill="url(#bg)"/>
+    <rect x="0" y="0" width="512" height="512" fill="url(#bg-glow)"/>
+
+    <g transform="translate(96 64) scale(8)">
+      <path d="M6 21 L13 34 L21 16 L29 31 L37 8" stroke="url(#ic-base)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M6 21 L13 34 L21 16 L29 31 L37 8" stroke="url(#ic-shine)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none" transform="translate(-0.5 -1.1)"/>
+      <path d="M32.8 6.5 L41.2 9.5 L39 2.3 Z" fill="url(#ic-arrow)"/>
+      <circle cx="43" cy="3" r="1.8" fill="#fef9c3"/>
+    </g>
+  </g>
+</svg>
