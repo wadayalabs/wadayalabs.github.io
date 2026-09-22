@@ -16,61 +16,83 @@
   A friend taps https://wadayalabs.github.io/vineclimb/?c=CODE in a chat.
     · App installed, App Links verified  → Android opens Vineclimb directly;
       this page is never shown.
-    · App installed, not yet verified    → this page loads and immediately
-      tries an Android intent:// URL, which opens the app if present…
-    · App NOT installed                  → …and otherwise falls back to the
-      Play Store, carrying the code in `referrer=` so Vineclimb's first
-      launch opens this exact challenge (Install Referrer API).
+    · App installed, not yet verified    → this page shows an "Open in
+      Vineclimb" button (an Android intent:// URL) that opens the app…
+    · App NOT installed                  → …or, via that same URL's fallback
+      and the Play button, goes to the Play Store carrying the code in
+      `referrer=`, so Vineclimb's first launch opens this exact challenge
+      (Install Referrer API). Nothing happens without a tap.
   Everything else here is the honest fallback for a human: the code, a copy
   button, and the store button. No tracking, no scripts from anywhere else.
 -->
 <style>
-  :root { --bg:#F2EEE6; --surface:#FFFDF9; --ink:#2A2620; --soft:#6B655B; --line:#E3DDD2;
+  :root { --bg:#F2EEE6; --surface:#FFFDF9; --ink:#2A2620; --soft:#6B655B; --faint:#8E877B; --line:#E3DDD2;
           --accent:#4B7A55; --accent-ink:#FFFFFF; --accent-soft:#DDEBDD; }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#1D211D; --surface:#262B26; --ink:#F1EEE6; --soft:#B5B0A5; --line:#3A403A;
+    :root { --bg:#1D211D; --surface:#262B26; --ink:#F1EEE6; --soft:#B5B0A5; --faint:#8C877D; --line:#3A403A;
             --accent:#7FB088; --accent-ink:#14281A; --accent-soft:#2F3F31; }
   }
   * { box-sizing: border-box; }
+  /* Nothing on this page is selectable prose — same rule as inside the game.
+     A tap on the title or the code must not sprout copy handles; the copy
+     BUTTON is the way to copy. `.selectable` is added to the code box only
+     for the instant the execCommand fallback needs a real selection. */
   html, body { margin:0; background:var(--bg); color:var(--ink);
-    font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  main { min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
-  .card { width:100%; max-width:420px; background:var(--surface); border:1px solid var(--line);
-    border-radius:28px; padding:28px 22px; text-align:center; box-shadow:0 18px 40px -24px rgba(0,0,0,.25); }
-  .icon { width:76px; height:76px; border-radius:20px; box-shadow:0 8px 18px -8px rgba(0,0,0,.35); }
-  .brand { margin:14px 0 4px; font-size:12px; letter-spacing:.28em; text-transform:uppercase; color:var(--soft); font-weight:600; }
-  h1 { margin:0 0 6px; font-size:24px; letter-spacing:-.02em; }
-  p { margin:0; color:var(--soft); font-size:14px; }
-  .code { margin:20px 0 8px; padding:12px 14px; border:1px dashed var(--line); border-radius:14px;
-    font: 600 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; word-break:break-all; letter-spacing:.04em; }
-  .btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; margin-top:12px;
-    padding:14px 18px; border-radius:999px; border:1px solid transparent; font-weight:700; font-size:15px;
+    font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent; }
+  .selectable { -webkit-user-select:text; user-select:text; }
+  /* Same proportions as the greeting/welcome cards inside the app: a 352px
+     card, 24px corners, 28px sides / 24px top, 20px between sections, and the
+     app's type sizes (10px brand, 20px title, 13px body, 11px code). It was a
+     420px card with a 76px icon and 15px buttons, which on a phone was a
+     screen and a half; this fits one. Sizes are in CSS px; the app's stage
+     is 412 design px wide, so on a 360–412px phone these read the same. */
+  main { min-height:100dvh; display:flex; align-items:flex-start; justify-content:center; padding:max(20px, env(safe-area-inset-top)) 16px 20px; }
+  @media (min-height: 700px) { main { align-items:center; } }
+  .card { width:100%; max-width:352px; display:flex; flex-direction:column; align-items:center; gap:18px;
+    background:var(--surface); border:1px solid var(--line); border-radius:24px; padding:24px 28px 28px;
+    text-align:center; box-shadow:0 18px 40px -24px rgba(0,0,0,.25); }
+  .head { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .icon { width:56px; height:56px; border-radius:16px; box-shadow:0 8px 18px -8px rgba(0,0,0,.35); margin-bottom:6px; }
+  .brand { margin:0; font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--faint); font-weight:600; }
+  h1 { margin:0; font-size:20px; line-height:1.2; letter-spacing:-.01em; font-weight:800; }
+  p { margin:0; color:var(--soft); font-size:13px; line-height:1.45; }
+  .code { width:100%; margin:0; padding:10px 12px; border:1px dashed var(--line); border-radius:12px; color:var(--soft);
+    font: 600 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; word-break:break-all; letter-spacing:.04em; }
+  .actions { width:100%; display:flex; flex-direction:column; gap:8px; }
+  .btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin:0;
+    padding:12px 18px; border-radius:999px; border:1px solid transparent; font-weight:700; font-size:14px; line-height:1.2;
     text-decoration:none; cursor:pointer; -webkit-tap-highlight-color: transparent; }
+  .btn:active { transform:scale(.98); }
   .primary { background:var(--accent); color:var(--accent-ink); }
   .secondary { background:var(--accent-soft); color:var(--ink); border-color:var(--line); }
-  .ghost { background:transparent; color:var(--soft); border-color:var(--line); font-weight:600; }
-  .hint { margin-top:16px; font-size:12px; }
+  .ghost { background:transparent; color:var(--soft); border-color:var(--line); font-weight:600; font-size:13px; padding:10px 16px; }
+  .hint { font-size:12px; color:var(--faint); }
   .hidden { display:none !important; }
-  .steps { text-align:left; margin:14px 0 0; padding:0 0 0 18px; color:var(--soft); font-size:13px; }
-  .steps li { margin:4px 0; }
+  .steps { width:100%; text-align:left; margin:0; padding:0 0 0 18px; color:var(--soft); font-size:12px; line-height:1.4; }
+  .steps li { margin:3px 0; }
 </style>
 </head>
 <body>
 <main>
   <div class="card">
-    <img class="icon" src="icon-512.png" alt="" width="76" height="76">
-    <div class="brand">Vineclimb</div>
-    <h1 id="title">You've been challenged</h1>
-    <p id="lead">Beat their time on the very same board.</p>
+    <div class="head">
+      <img class="icon" src="icon-512.png" alt="" width="56" height="56">
+      <div class="brand">Vineclimb</div>
+      <h1 id="title">You've been challenged</h1>
+      <p id="lead">Beat their time on the very same board.</p>
+    </div>
 
     <div id="codeBox" class="code hidden"></div>
 
-    <a id="openApp" class="btn primary hidden" href="#">Open in Vineclimb</a>
-    <a id="getApp" class="btn primary" href="https://play.google.com/store/apps/details?id=com.wadayalabs.vineclimb" rel="noopener">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 13.2 12 3.6 21.7c-.4-.3-.6-.8-.6-1.4V3.7c0-.6.2-1.1.6-1.4zm11 8.3L5.3 2.4l10.6 6.1-1.3 2.1zm0 2.8 1.3 2.1L5.3 21.6l9.3-8.2zm5.6-2.6c.9.5 .9 1.9 0 2.4l-3.1 1.8-1.6-2.9 1.6-3 3.1 1.7z"/></svg>
-      Get Vineclimb on Google Play
-    </a>
-    <button id="copy" class="btn secondary hidden" type="button">Copy the code</button>
+    <div class="actions">
+      <a id="openApp" class="btn primary hidden" href="#">Open in Vineclimb</a>
+      <a id="getApp" class="btn primary" href="https://play.google.com/store/apps/details?id=com.wadayalabs.vineclimb" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 13.2 12 3.6 21.7c-.4-.3-.6-.8-.6-1.4V3.7c0-.6.2-1.1.6-1.4zm11 8.3L5.3 2.4l10.6 6.1-1.3 2.1zm0 2.8 1.3 2.1L5.3 21.6l9.3-8.2zm5.6-2.6c.9.5 .9 1.9 0 2.4l-3.1 1.8-1.6-2.9 1.6-3 3.1 1.7z"/></svg>
+        Get it on Google Play
+      </a>
+      <button id="copy" class="btn secondary hidden" type="button">Copy the code</button>
+    </div>
 
     <ol id="steps" class="steps hidden">
       <li>Install Vineclimb from Google Play.</li>
@@ -124,7 +146,15 @@
   $("copy").addEventListener("click", function () {
     var done = function () { $("copy").textContent = "Copied"; setTimeout(function () { $("copy").textContent = "Copy the code"; }, 1600); };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done, function () {});
-    else { var r = document.createRange(); r.selectNodeContents($("codeBox")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); try { document.execCommand("copy"); done(); } catch (e) {} }
+    else {
+      // Old WebViews without navigator.clipboard: select the code for the
+      // instant execCommand needs, then clear it. The box is user-select:none
+      // otherwise, so the selection cannot be made (or left behind) by a tap.
+      var box = $("codeBox"); box.classList.add("selectable");
+      var r = document.createRange(); r.selectNodeContents(box); var s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      try { document.execCommand("copy"); done(); } catch (e) {}
+      s.removeAllRanges(); box.classList.remove("selectable");
+    }
   });
 
   var ua = navigator.userAgent || "";
@@ -138,6 +168,10 @@
     $("openApp").href = intent;
     $("openApp").classList.remove("hidden");
     $("getApp").classList.remove("primary"); $("getApp").classList.add("ghost");
+    // The "paste the code" hint repeats step 3 and, with an Open button on
+    // screen, is not the next thing to do; dropping it keeps the card on one
+    // 360×740 screen.
+    $("hint").classList.add("hidden");
     // NO automatic redirect. It was tried (an intent:// navigation 350ms
     // after load): for someone WITH the app it saved one tap, but for
     // everyone else the page flashed for a fraction of a second and was
