@@ -138,10 +138,13 @@
     $("openApp").href = intent;
     $("openApp").classList.remove("hidden");
     $("getApp").classList.remove("primary"); $("getApp").classList.add("ghost");
-    // Try once, automatically, so a tap in a chat is one tap total. If the
-    // page is still visible after a moment, the app is not installed and the
-    // buttons above are the honest next step.
-    setTimeout(function () { location.href = intent; }, 350);
+    // NO automatic redirect. It was tried (an intent:// navigation 350ms
+    // after load): for someone WITH the app it saved one tap, but for
+    // everyone else the page flashed for a fraction of a second and was
+    // replaced by the Play Store before they could read who had challenged
+    // them — which read as a glitch, not a feature. The page now stays, and
+    // "Open in Vineclimb" is the one tap. Installed players with App Links
+    // verified never see this page anyway.
   }
 })();
 </script>
