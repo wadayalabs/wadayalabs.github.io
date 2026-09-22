@@ -16,12 +16,13 @@
   A friend taps https://wadayalabs.github.io/vineclimb/?c=CODE in a chat.
     · App installed, App Links verified  → Android opens Vineclimb directly;
       this page is never shown.
-    · App installed, not yet verified    → this page shows an "Open in
-      Vineclimb" button (an Android intent:// URL) that opens the app…
-    · App NOT installed                  → …or, via that same URL's fallback
-      and the Play button, goes to the Play Store carrying the code in
-      `referrer=`, so Vineclimb's first launch opens this exact challenge
-      (Install Referrer API). Nothing happens without a tap.
+    · App installed, not yet verified    → this page shows the card, then
+      after ~1s tries an Android intent:// URL that opens the app; the
+      "Open in Vineclimb" button is the same URL for a manual tap…
+    · App NOT installed                  → …and that URL's fallback (and the
+      Play button) goes to the Play Store carrying the code in `referrer=`,
+      so Vineclimb's first launch opens this exact challenge (Install
+      Referrer API). The card stays on screen throughout.
   Everything else here is the honest fallback for a human: the code, a copy
   button, and the store button. No tracking, no scripts from anywhere else.
 -->
@@ -47,8 +48,11 @@
      420px card with a 76px icon and 15px buttons, which on a phone was a
      screen and a half; this fits one. Sizes are in CSS px; the app's stage
      is 412 design px wide, so on a 360–412px phone these read the same. */
-  main { min-height:100dvh; display:flex; align-items:flex-start; justify-content:center; padding:max(20px, env(safe-area-inset-top)) 16px 20px; }
-  @media (min-height: 700px) { main { align-items:center; } }
+  /* Centred in the SMALL viewport height (100svh), which is a constant: 100vh
+     and 100dvh change as the browser's address bar collapses, and a card
+     centred in a changing height moves. If the card is taller than a short
+     screen the page simply scrolls. */
+  main { min-height:100svh; display:flex; align-items:center; justify-content:center; padding:max(20px, env(safe-area-inset-top)) 16px 20px; }
   .card { width:100%; max-width:352px; display:flex; flex-direction:column; align-items:center; gap:18px;
     background:var(--surface); border:1px solid var(--line); border-radius:24px; padding:24px 28px 28px;
     text-align:center; box-shadow:0 18px 40px -24px rgba(0,0,0,.25); }
@@ -172,13 +176,18 @@
     // screen, is not the next thing to do; dropping it keeps the card on one
     // 360×740 screen.
     $("hint").classList.add("hidden");
-    // NO automatic redirect. It was tried (an intent:// navigation 350ms
-    // after load): for someone WITH the app it saved one tap, but for
-    // everyone else the page flashed for a fraction of a second and was
-    // replaced by the Play Store before they could read who had challenged
-    // them — which read as a glitch, not a feature. The page now stays, and
-    // "Open in Vineclimb" is the one tap. Installed players with App Links
-    // verified never see this page anyway.
+    // OPEN AUTOMATICALLY, WITH THE CARD LEFT ON SCREEN. An earlier version
+    // navigated away 350ms after load, so the card flashed and vanished; the
+    // version after that waited for a tap, which the user found one tap too
+    // many. This is the middle: the card renders and stays, and after a
+    // short beat the same intent:// URL as the button is tried. With the
+    // app installed Android switches to Vineclimb (the card stays behind it
+    // in the browser); without it, browser_fallback_url takes the reader to
+    // the Play listing, referrer included. Honest limit: Chrome may refuse
+    // an intent launch that no tap caused (its rules on gesture-less
+    // external navigations have tightened over the years) — in that case
+    // nothing happens and the two buttons are still right there.
+    setTimeout(function () { location.href = intent; }, 900);
   }
 })();
 </script>
