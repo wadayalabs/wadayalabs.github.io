@@ -17,9 +17,9 @@
     · App installed, App Links verified  → Android opens Vineclimb directly;
       this page is never shown.
     · App installed, not yet verified    → this page shows the card, then
-      after ~1s tries an Android intent:// URL (no fallback) that opens the
-      app where Chrome allows it; the "Open in Vineclimb" button is the same
-      URL with a Play Store fallback, for a tap…
+      after ~1s tries a bare intent:// URL (no package, no fallback) that
+      opens the app where Chrome allows it; the "Open in Vineclimb" button
+      is the full URL (package + Play Store fallback), for a tap…
     · App NOT installed                  → …the button's fallback (and the
       Play button) go to the Play Store carrying the code in `referrer=`, so
       Vineclimb's first launch opens this exact challenge (Install Referrer
@@ -168,30 +168,37 @@
   if (android) {
     // Chrome/Android "intent:" URL: opens the app if installed. Works even
     // before App Links verification is in place.
-    var base = "intent://c/" + code + "#Intent;scheme=" + SCHEME + ";package=" + PKG + ";";
-    // THE BUTTON carries a Play Store fallback: a tap is a user gesture, so
-    // Chrome launches the app when it is there and follows the fallback only
-    // when it is not — the behaviour the fallback is for.
-    $("openApp").href = base + "S.browser_fallback_url=" + encodeURIComponent(play) + ";end";
+    // THE BUTTON carries the package AND a Play Store fallback: a tap is a
+    // user gesture, so Chrome launches the app when it is there and follows
+    // the fallback only when it is not — the behaviour the fallback is for.
+    $("openApp").href = "intent://c/" + code + "#Intent;scheme=" + SCHEME + ";package=" + PKG +
+                        ";S.browser_fallback_url=" + encodeURIComponent(play) + ";end";
     $("openApp").classList.remove("hidden");
     $("getApp").classList.remove("primary"); $("getApp").classList.add("ghost");
     // The "paste the code" hint repeats step 3 and, with an Open button on
     // screen, is not the next thing to do; dropping it keeps the card on one
     // 360×740 screen.
     $("hint").classList.add("hidden");
-    // OPEN AUTOMATICALLY, WITH THE CARD LEFT ON SCREEN — AND WITHOUT THE
-    // FALLBACK. Reported from a phone that HAD the app: tapping a result link
-    // landed on the Play Store. The cause is Chrome's rule for intent://
-    // navigations that no tap caused: it refuses to launch the app, and when
-    // the URL carries browser_fallback_url it goes THERE instead — so an
-    // installed player was sent to the store by the very fallback meant for
-    // players without the app. (The invite link "worked" only because it was
-    // tapped through the button, or because App Links verification had
-    // finished by then and the page was never shown.) The automatic attempt
-    // therefore carries NO fallback: if Chrome allows it, the app opens; if
-    // Chrome blocks it, nothing happens and the card with its two buttons is
-    // still on screen. Nobody is sent to the store by a timer.
-    setTimeout(function () { location.href = base + "end"; }, 900);
+    // OPEN AUTOMATICALLY, WITH THE CARD LEFT ON SCREEN — WITH NEITHER THE
+    // FALLBACK NOR THE PACKAGE. Two rounds of reports shaped this line:
+    //
+    //   1. A phone WITH the app landed on the Play Store from a result link.
+    //      Chrome refuses an intent:// launch that no tap caused, and when
+    //      the URL carries S.browser_fallback_url it goes there instead. So
+    //      the fallback came off the automatic attempt.
+    //   2. A phone WITHOUT the app STILL landed on the Play Store. Chrome has
+    //      a second, less-known rule: an intent:// URL that names a
+    //      `package` and finds no app to handle it is sent to the Play Store
+    //      listing for that package, fallback or no fallback.
+    //
+    // So the automatic attempt is the bare scheme URL — vineclimb://c/CODE
+    // wrapped as intent:// with no package and no fallback. Installed and
+    // allowed by Chrome: the app opens. Installed but blocked (no gesture),
+    // or not installed: NOTHING happens and the card stays with its two
+    // buttons. The store is reached only through a tap, and the button
+    // above keeps the package + fallback so that tap does the right thing
+    // whether or not the app is there.
+    setTimeout(function () { location.href = "intent://c/" + code + "#Intent;scheme=" + SCHEME + ";end"; }, 900);
   }
 })();
 </script>
