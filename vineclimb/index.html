@@ -131,7 +131,9 @@
   var isResult = code.length > 42;
   // Who, which board, how fast — sent alongside the code by the sender's app
   // (see inviteLines in the game). Display only; the app decodes the code.
-  var name = (params.get("n") || "").replace(/[^A-Za-z0-9 '\-]/g, "").slice(0, 13).trim();
+  // Same alphabet as the app's names: letters, digits, - and _ (a space in a
+  // name is stored as _, so "Mary_Jane" must not lose its underscore here).
+  var name = (params.get("n") || "").replace(/[^A-Za-z0-9_\-]/g, "").slice(0, 13);
   var board = (params.get("b") || "").replace(/[<>]/g, "").slice(0, 40).trim();
   var secs = parseInt(params.get("t") || "", 10);
   var time = secs > 0 ? Math.floor(secs / 60) + ":" + ("0" + (secs % 60)).slice(-2) : "";
@@ -165,7 +167,15 @@
 
   var ua = navigator.userAgent || "";
   var android = /Android/i.test(ua);
-  if (android) {
+  // intent:// is a Chrome feature. In the plain WebView that Facebook,
+  // Instagram, Messenger, Gmail and some Telegram builds open links in, an
+  // intent: navigation is an unknown scheme and REPLACES this page with a
+  // browser error — the friend never sees the card or the Play button. Those
+  // browsers identify themselves with "wv" (and usually no Chrome/NN token),
+  // so there the page keeps the Play button only; the Play Store's own
+  // "Open" button then reaches an installed app.
+  var chromeLike = /Chrome\/\d/.test(ua) && !/\bwv\b/.test(ua);
+  if (android && chromeLike) {
     // Chrome/Android "intent:" URL: opens the app if installed. Works even
     // before App Links verification is in place.
     // THE BUTTON carries the package AND a Play Store fallback: a tap is a
