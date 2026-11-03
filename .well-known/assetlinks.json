@@ -1,0 +1,14 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.wadayalabs.vineclimb",
+      "sha256_cert_fingerprints":
+        ["39:EA:B2:6C:26:53:A4:3C:1A:C9:B4:58:74:18:05:69:F9:25:3A:2E:AC:12:4A:0C:55:D4:C8:E2:00:9C:17:15",
+        "FA:C1:47:1E:7F:C2:B0:FC:72:0F:DA:01:37:42:BF:B7:A9:30:0C:CC:2B:3B:53:E1:41:EC:00:14:79:A3:A7:95",
+        "0A:65:23:C3:74:43:62:4F:D8:5C:E3:A2:31:41:19:04:6B:DB:1A:C7:93:94:11:87:CF:C5:FD:0F:9F:CE:47:7E"
+      ]
+    }
+  }
+]
